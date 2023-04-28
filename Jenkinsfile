@@ -27,5 +27,23 @@ pipeline {
                 sh 'mvn clean install'
             }
         }
+
+        stage("Static Code Analysis"){
+            steps {
+                script {
+                    withSonarQubeEnv(credentialsId: '569f2af5-9f71-4f36-a2b6-94bf63e88856') {
+                        sh 'mvn clean package sonar:sonar'
+                    }
+                }
+            }
+        }
+
+        stage("Quality Gate Analysis"){
+            steps {
+                script {
+                   waitForQualityGate abortPipeline: false, credentialsId: '569f2af5-9f71-4f36-a2b6-94bf63e88856' 
+                }
+            }
+        }
     }
 }
